@@ -1,0 +1,23 @@
+name: gbfs_enhance
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.9
+  - pip
+  - numpy=1.26
+  - scipy=1.13
+  - pandas=2.3
+  - scikit-learn=1.6
+  - joblib
+  - threadpoolctl
+  - networkx=3.2
+  - h5py=3.14
+  - matplotlib=3.9
+  - pillow
+  - imbalanced-learn=0.12
+  - qpsolvers=4.8
+
+  - pip:
+      - itmo-fs==0.3.3
+      - pyifs==0.0.3
