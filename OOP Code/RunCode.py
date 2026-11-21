@@ -44,7 +44,7 @@ cfg = ExperimentConfig(
 
     log_params=LogParams(
         enabled=True,
-        log_only_selected_combo=False,   # True nếu chỉ muốn export log nặng cho combo log_*
+        log_only_selected_combo=False,   # True se quiser exportar os logs detalhados apenas para as combinações log_*
         export_init_graph=True,
         export_solver_meta=True,
         export_solver_logs=True,
@@ -59,3 +59,4 @@ product, name = runner.run_dataset(1)
 print("Dataset:", name)
 for row in product:
     print(row)
+print("RUNCODE")

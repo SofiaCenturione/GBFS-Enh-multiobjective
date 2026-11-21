@@ -21,7 +21,7 @@ def initialize_variables_f(N, M, V, templateAdj):
         - columns 0..V-1: binary chromosome
         - columns V..V+M-1: objective values
     featIdx_f : np.ndarray, shape (N, n_features_full)
-        Feature mask cho từng cá thể.
+        Máscara de características de cada indivíduo.
     """
     K = M + V
 

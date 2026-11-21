@@ -4,7 +4,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
 import gbfs_globals as GG
-
+print("SEQUENTIAL STRATEGIES")
 def comp_to_set(f, S, C, mode="max"):
     S = list(S)
     if len(S) == 0:

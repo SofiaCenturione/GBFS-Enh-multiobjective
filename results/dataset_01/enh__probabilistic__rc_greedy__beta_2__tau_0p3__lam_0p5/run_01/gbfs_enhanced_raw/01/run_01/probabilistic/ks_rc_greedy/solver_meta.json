@@ -1,0 +1,9 @@
+{
+  "init_mode": "probabilistic",
+  "assi_num": 0.0,
+  "log_id": 1,
+  "solver_time": 1.8664918,
+  "fnum_S0": 5,
+  "run": 1,
+  "kshell_seq_mode": "rc_greedy"
+}

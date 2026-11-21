@@ -1,0 +1,15 @@
+{
+  "dataset_idx": 1,
+  "run": 1,
+  "algo": "all",
+  "seed_run": 1001,
+  "test_size": 0.3,
+  "split_seed": 42,
+  "cv_folds": 3,
+  "cv_seed": 42,
+  "knn_eval_k": 3,
+  "fixed_fnum": 0,
+  "prob_beta": 2.0,
+  "ks_rc_tau": 0.3,
+  "buddy_lambda": 0.5
+}

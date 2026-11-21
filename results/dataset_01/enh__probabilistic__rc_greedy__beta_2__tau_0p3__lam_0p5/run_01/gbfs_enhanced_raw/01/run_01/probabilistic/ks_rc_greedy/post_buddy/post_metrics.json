@@ -1,0 +1,12 @@
+{
+  "run": 1,
+  "init_mode": "probabilistic",
+  "kshell_seq_mode": "rc_greedy",
+  "post_mode": "buddy",
+  "acc_test": 0.6153846153846154,
+  "red": 0.26446789002069704,
+  "fnum": 6,
+  "time_total": 1.8866710999999998,
+  "time_solver": 1.8664918,
+  "time_post_extra": 0.0201792999999999
+}

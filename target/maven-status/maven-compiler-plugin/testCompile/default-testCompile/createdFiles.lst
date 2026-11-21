@@ -1,0 +1,5 @@
+org\gbfs\featureselection\GraphShellSelectorTest.class
+org\gbfs\data\MatDatasetLoaderTest.class
+org\gbfs\featureselection\GraphInitializersTest.class
+org\gbfs\math\MatrixOpsTest.class
+org\gbfs\featureselection\FisherScoreTest.class

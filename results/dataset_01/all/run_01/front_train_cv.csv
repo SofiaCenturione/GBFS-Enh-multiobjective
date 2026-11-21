@@ -1,0 +1,2 @@
+dataset_idx,dataset,method,run,point_id,fnum,fRatio,acc_train_cv,eRate_train_cv,red,fset,note,scaler
+1,Glass,KNN_ALL,1,0,9,1.0,0.6235374149659864,0.37646258503401364,0.227698429382372,0 1 2 3 4 5 6 7 8,ALL features,StandardScaler

@@ -31,7 +31,7 @@ Weight = None
 visual_dir = None
 current_run = None
 run_logs = {}
-M = 2
+M = 5 # n de objetivos
 
 # init_mode = "local_thresh" 
 init_mode = "knn" 

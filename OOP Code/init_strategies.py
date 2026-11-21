@@ -3,8 +3,8 @@ from scipy.sparse.csgraph import minimum_spanning_tree
 
 def _neighbors_from_adj(A, tol=0.0):
     """
-    Tạo list các đỉnh kề từ ma trận adjacency A.
-    neighbors[i] = np.array các j sao cho A[i, j] > tol
+    Cria uma lista de vértices adjacentes a partir da matriz de adjacência A.
+    neighbors[i] = np.array com os índices j para os quais A[i, j] > tol
     """
     A = np.asarray(A, dtype=float)
     n = A.shape[0]
@@ -15,7 +15,7 @@ def _neighbors_from_adj(A, tol=0.0):
     return neighbors
 
 
-def init_graph_local_threshold(
+def init_graph_local_threshold( #constroi a topologia inicial do grafo
     Z,
     k_min=1,
     quantile=0.8,
@@ -23,29 +23,29 @@ def init_graph_local_threshold(
     symmetrize=True,
 ):
     """
-    Xây đồ thị dựa trên threshold riêng cho từng đỉnh:
-      - Với mỗi feature i, chọn các cạnh có sim >= quantile của hàng i.
-      - Nếu số cạnh < k_min thì bù thêm top k_min theo sim.
+    Constrói o grafo com um limiar específico para cada vértice:
+      - Para cada característica i, seleciona as arestas com sim >= quantil da linha i.
+      - Se o número de arestas for < k_min, adiciona as k_min maiores similaridades.
 
     Parameters
     ----------
     Z : np.ndarray, shape (n_features, n_features)
-        Ma trận similarity (ví dụ GG.Zout).
+        Matriz de similaridade (por exemplo, GG.Zout).
     k_min : int
-        Số neighbor tối thiểu của mỗi đỉnh.
+        Número mínimo de vizinhos de cada vértice.
     quantile : float in (0,1)
-        Ngưỡng quantile cho mỗi hàng, ví dụ 0.8 = top 20% similarity.
+        Limiar de quantil para cada linha; por exemplo, 0.8 seleciona os 20% maiores valores de similaridade.
     exclude_self : bool
-        Nếu True thì bỏ cạnh (i, i).
+        Se True, remove a aresta (i, i).
     symmetrize : bool
-        Nếu True thì A = max(A, A^T) để đồ thị vô hướng.
+        Se True, define A = max(A, A^T) para tornar o grafo não direcionado.
 
     Returns
     -------
     A : np.ndarray, shape (n_features, n_features)
-        Ma trận adjacency (0 = không có cạnh).
+        Matriz de adjacência (0 = sem aresta).
     neighbors : list[np.ndarray]
-        neighbors[i] = list các đỉnh kề với i (chỉ số feature).
+        neighbors[i] = lista dos vértices adjacentes a i (índices das características).
     """
     Z = np.asarray(Z, dtype=float)
     n = Z.shape[0]
@@ -66,9 +66,9 @@ def init_graph_local_threshold(
         if exclude_self:
             neigh = neigh[neigh != i]
 
-        # đảm bảo ít nhất k_min neighbor
+        # Garante pelo menos k_min vizinhos
         if neigh.size < k_min:
-            order = np.argsort(-row)  # giảm dần
+            order = np.argsort(-row)  # ordem decrescente
             if exclude_self:
                 order = order[order != i]
             neigh = order[:k_min]
@@ -94,9 +94,9 @@ def init_graph_fisher_redundancy_degree(
     symmetrize=True,
 ):
     """
-    Mỗi đỉnh i có số neighbor deg_i phụ thuộc:
-      - Fisher score f_i (cao -> nhiều cạnh)
-      - Redundancy r_i (cao -> ít cạnh)
+    O número de vizinhos deg_i de cada vértice i depende de:
+      - escore de Fisher f_i (quanto maior, mais arestas)
+      - redundância r_i (quanto maior, menos arestas)
 
     deg_i = k_min + (k_max - k_min) * [0.5*f_norm_i + 0.5*(1 - r_norm_i)]
 
@@ -105,9 +105,9 @@ def init_graph_fisher_redundancy_degree(
     Z : np.ndarray, (n, n)
         Similarity matrix.
     fisher_scores : np.ndarray, (n,)
-        Fisher score cho từng feature (trước khi scale).
+        Escore de Fisher para cada característica (antes da normalização).
     k_min, k_max : int
-        Số cạnh min/max cho mỗi đỉnh.
+        Número mínimo/máximo de arestas por vértice.
     exclude_self, symmetrize : bool
 
     Returns
@@ -115,22 +115,22 @@ def init_graph_fisher_redundancy_degree(
     A : np.ndarray, (n, n)
         Adjacency matrix.
     degs : np.ndarray, (n,)
-        Số neighbor đã chọn cho mỗi đỉnh (trước khi symmetrize).
+        Número de vizinhos selecionados para cada vértice (antes da simetrização).
     neighbors : list[np.ndarray]
-        neighbors[i] theo A (sau khi symmetrize nếu symmetrize=True).
+        neighbors[i] conforme A (após a simetrização, se symmetrize=True).
     """
     Z = np.asarray(Z, dtype=float)
     fisher_scores = np.asarray(fisher_scores, dtype=float)
     n = Z.shape[0]
     assert fisher_scores.shape[0] == n
 
-    # redundancy r_i = mean similarity với các đỉnh khác
+    # redundância r_i = similaridade média com os outros vértices
     R = np.abs(Z.copy())
     if exclude_self:
         np.fill_diagonal(R, 0.0)
     r_i = R.mean(axis=1)
 
-    # normalize fisher và redundancy về [0,1]
+    # Normaliza o escore de Fisher e a redundância para [0, 1]
     f_min, f_max = fisher_scores.min(), fisher_scores.max()
     if f_max - f_min < 1e-12:
         f_norm = np.full_like(fisher_scores, 0.5, dtype=float)
@@ -155,7 +155,7 @@ def init_graph_fisher_redundancy_degree(
         if exclude_self:
             row[i] = 0.0
 
-        order = np.argsort(-row)  # giảm dần
+        order = np.argsort(-row)  # ordem decrescente
         if exclude_self:
             order = order[order != i]
 
@@ -182,41 +182,41 @@ def init_graph_mst_plus_local(
     symmetrize=True,
 ):
     """
-    Xây đồ thị với 2 tầng:
-      1) MST backbone (trên distance = 1 - similarity).
-      2) Mỗi đỉnh được thêm extra_k cạnh local mạnh nhất
-         (không trùng cạnh MST).
+    Constrói o grafo em duas etapas:
+      1) Estrutura principal MST (com distância = 1 - similaridade).
+      2) Adiciona a cada vértice as extra_k arestas locais mais fortes
+         (sem repetir arestas da MST).
 
     Parameters
     ----------
     Z : np.ndarray, (n, n)
-        Ma trận similarity.
+        Matriz de similaridade.
     extra_k : int
-        Số neighbor local thêm vào mỗi đỉnh ngoài MST.
+        Número de vizinhos locais adicionados a cada vértice além da MST.
     exclude_self, symmetrize : bool
 
     Returns
     -------
     A : np.ndarray, (n, n)
-        Adjacency matrix sau khi thêm MST + local edges.
+        Matriz de adjacência após adicionar a MST e as arestas locais.
     neighbors : list[np.ndarray]
-        neighbors[i] theo A (sau khi symmetrize nếu symmetrize=True).
+        neighbors[i] conforme A (após a simetrização, se symmetrize=True).
     """
     Z = np.asarray(Z, dtype=float)
     n = Z.shape[0]
 
-    # 1) MST trên distance = 1 - similarity
+    # 1) MST com distância = 1 - similaridade
     D = 1.0 - Z
     D[D < 0.0] = 0.0
 
     mst_sparse = minimum_spanning_tree(D)
     mst = mst_sparse.toarray()
-    # Symmetric MST (vô hướng)
+    # MST simétrica (não direcionada)
     mst = np.maximum(mst, mst.T)
 
     A = np.zeros_like(Z, dtype=float)
 
-    # Thêm cạnh MST với trọng số similarity
+    # Adiciona as arestas da MST com pesos de similaridade
     i_idx, j_idx = np.where(mst > 0)
     for i, j in zip(i_idx, j_idx):
         if i == j:
@@ -224,13 +224,13 @@ def init_graph_mst_plus_local(
         A[i, j] = Z[i, j]
         A[j, i] = Z[j, i]
 
-    # 2) Thêm extra_k local neighbors mạnh nhất cho mỗi đỉnh
+    # 2) Adiciona os extra_k vizinhos locais mais fortes a cada vértice
     for i in range(n):
         row = Z[i].copy()
         if exclude_self:
             row[i] = 0.0
 
-        # Loại bỏ các node đã được nối bởi MST
+        # Remove os nós já conectados pela MST
         already = np.where(A[i] > 0)[0]
         if already.size > 0:
             row[already] = 0.0
@@ -269,12 +269,12 @@ def init_graph_probabilistic(
     random_state=None,
 ):
     """
-    Với mỗi đỉnh i:
-      - Độ lớn deg_i = k_min + (k_max - k_min) * f_norm_i  (fisher lớn -> nhiều cạnh).
-      - Chọn deg_i neighbor bằng cách sample không thay thế với xác suất:
+    Para cada vértice i:
+      - O grau deg_i = k_min + (k_max - k_min) * f_norm_i (Fisher maior -> mais arestas).
+      - Seleciona deg_i vizinhos por amostragem sem reposição, com probabilidade:
             p_ij ∝ (sim_ij ** beta) * g(f_i, f_j)
-        với g(f_i, f_j) ~ 0.5*(f_norm_i + f_norm_j).
-      - Nếu tất cả weight bằng 0 thì fallback sang lấy top-k theo similarity.
+        em que g(f_i, f_j) ~ 0.5*(f_norm_i + f_norm_j).
+      - Se todos os pesos forem zero, recorre às k maiores similaridades.
 
     Parameters
     ----------
@@ -283,19 +283,19 @@ def init_graph_probabilistic(
     fisher_scores : np.ndarray, (n,)
         Fisher scores.
     k_min, k_max : int
-        Min/max degree mỗi đỉnh.
+        Grau mínimo/máximo de cada vértice.
     beta : float
-        Độ "sắc" của phân phối theo similarity (beta lớn -> ưu tiên cạnh rất mạnh).
+        Grau de concentração da distribuição baseada na similaridade (beta maior -> maior preferência por arestas fortes).
     exclude_self, symmetrize : bool
     random_state : int or None
-        Seed cho reproducibility.
+        Semente para reprodutibilidade.
 
     Returns
     -------
     A : np.ndarray, (n, n)
         Adjacency matrix.
     neighbors : list[np.ndarray]
-        neighbors[i] theo A (sau khi symmetrize nếu symmetrize=True).
+        neighbors[i] conforme A (após a simetrização, se symmetrize=True).
     """
     Z = np.asarray(Z, dtype=float)
     fisher_scores = np.asarray(fisher_scores, dtype=float)
@@ -321,7 +321,7 @@ def init_graph_probabilistic(
         if exclude_self:
             row[i] = 0.0
 
-        # degree mục tiêu cho node i
+        # Grau desejado para o nó i
         k_i_float = k_min + (k_max - k_min) * f_norm[i]
         k_i = int(round(k_i_float))
         k_i = max(k_min, min(k_i, n - 1))
@@ -331,7 +331,7 @@ def init_graph_probabilistic(
 
         vals = np.maximum(row, 0.0)
 
-        # Nếu tất cả weight = 0, fallback sang top-k
+        # Se todos os pesos forem zero, recorre aos k maiores valores
         if not np.any(vals > 0):
             order = np.argsort(-row)
             if exclude_self:

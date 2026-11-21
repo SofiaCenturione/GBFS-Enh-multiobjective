@@ -1,0 +1,6 @@
+dataset_idx,dataset,method,run,point_id,fnum,fRatio,acc_train_cv,eRate_train_cv,red,fset,init_mode,ks_mode,prob_beta,ks_rc_tau,buddy_lambda
+1,Glass,GBFS_enhanced__init_probabilistic__ks_rc_greedy,1,0,4,0.4444444444444444,0.6574149659863945,0.3425850340136055,0.33031931098755135,0 2 6 7,probabilistic,rc_greedy,2.0,0.3,0.5
+1,Glass,GBFS_enhanced__init_probabilistic__ks_rc_greedy,1,6,5,0.5555555555555556,0.6506122448979591,0.3493877551020409,0.3046196999267702,0 3 5 6 7,probabilistic,rc_greedy,2.0,0.3,0.5
+1,Glass,GBFS_enhanced__init_probabilistic__ks_rc_greedy,1,11,6,0.6666666666666666,0.5636734693877551,0.4363265306122449,0.20482345244939595,1 2 5 6 7 8,probabilistic,rc_greedy,2.0,0.3,0.5
+1,Glass,GBFS_enhanced__init_probabilistic__ks_rc_greedy,1,2,7,0.7777777777777778,0.6640816326530612,0.3359183673469388,0.2525052980839992,0 1 2 3 5 6 8,probabilistic,rc_greedy,2.0,0.3,0.5
+1,Glass,GBFS_enhanced__init_probabilistic__ks_rc_greedy,1,16,8,0.8888888888888888,0.5563265306122449,0.4436734693877551,0.2145123220913765,0 1 2 4 5 6 7 8,probabilistic,rc_greedy,2.0,0.3,0.5

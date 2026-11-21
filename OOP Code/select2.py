@@ -20,7 +20,7 @@ def select2(bucket):
 
     M = len(bucket)
     p_list = []
-
+    print("SELECT2")
     for i in range(M - 1):
         feats = np.asarray(bucket[i], dtype=int).ravel()
         if feats.size == 0:

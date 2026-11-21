@@ -1,0 +1,10 @@
+{
+  "algo": "enh:probabilistic:rc_greedy",
+  "method": "GBFS_enhanced__init_probabilistic__ks_rc_greedy",
+  "dataset_idx": 1,
+  "dataset": "Glass",
+  "run": 1,
+  "seed_run": 1001,
+  "cfg": { "test_size": 0.3, "split_seed": 42, "cv_folds": 3, "cv_seed": 42, "knn_eval_k": 3, "pop": 20, "gen": 50, "k_neigh": 5, "ks_max_add": 5, "ks_rc_tau": 0.3, "prob_beta": 2.0, "buddy_lambda": 0.5 },
+  "paths": { "combo_dir": "results\\dataset_01\\enh__probabilistic__rc_greedy__beta_2__tau_0p3__lam_0p5\\run_01\\gbfs_enhanced_raw\\01\\run_01\\probabilistic\\ks_rc_greedy" }
+}

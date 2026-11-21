@@ -1,0 +1,3 @@
+dataset_idx,dataset,method,run,test_mode,acc_test,eRate_test,fnum,fRatio,red,time_total,fset,init_mode,ks_mode,post_mode,prob_beta,ks_rc_tau,buddy_lambda
+1,Glass,GBFS_enhanced__init_probabilistic__ks_rc_greedy,1,selected,0.6615384615384615,0.3384615384615385,5,0.5555555555555556,0.21195732446467125,1.8664918,0 2 3 4 8,probabilistic,rc_greedy,normal,2.0,0.3,0.5
+1,Glass,GBFS_enhanced__init_probabilistic__ks_rc_greedy,1,selected,0.6153846153846154,0.3846153846153846,6,0.6666666666666666,0.26446789002069704,1.8866710999999998,0 2 3 4 6 8,probabilistic,rc_greedy,buddy,2.0,0.3,0.5

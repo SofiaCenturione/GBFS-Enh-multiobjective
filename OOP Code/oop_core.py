@@ -60,9 +60,9 @@ class LogParams:
     export_solver_meta: bool = True       # solver_meta.json + S0_selected + kNeigh_chosen
     export_solver_logs: bool = True       # pop_metrics.csv + gen_XXX.csv
     export_post_logs: bool = True         # post_x/selected_features + post_metrics.json
-    export_plots: bool = False            # gọi plot_knn_graph_with_selected
+    export_plots: bool = False            # Chama plot_knn_graph_with_selected
 
-    keep_run_logs_in_memory: bool = False # nếu False: GG.run_logs[log_id] sẽ pop sau khi export
+    keep_run_logs_in_memory: bool = False # Se False, GG.run_logs[log_id] será removido após a exportação
 
 
 @dataclass
@@ -76,12 +76,12 @@ class ExperimentConfig:
 
     knn_eval_k: int = 5
 
-    # init strategies bật/tắt ở đây
+    # Ativa/desativa as estratégias de inicialização aqui
     init_modes: List[str] = field(default_factory=lambda: ["knn"])
     kshell_seq_modes: List[str] = field(default_factory=lambda: ["normal"])
     post_seq_modes: List[str] = field(default_factory=lambda: ["normal"])
 
-    # mode nào được dùng để fill FSET/assiNum (giữ format output cũ)
+    # Modo usado para preencher FSET/assiNum (mantém o formato de saída antigo)
     log_init_mode: str = "knn"
     log_kshell_seq_mode: str = "normal"
     log_post_seq_mode: str = "normal"

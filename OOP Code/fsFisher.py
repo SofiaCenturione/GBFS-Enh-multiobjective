@@ -1,6 +1,6 @@
 import numpy as np
 
-def fsFisher(X, Y):
+def fsFisher(X, Y): #matemática para o fisher score
     """
     Fisher Score using the N-class formulation.
 

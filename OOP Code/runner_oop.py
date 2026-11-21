@@ -22,7 +22,7 @@ from helper import (
     _dump_post_metrics_json,
 )
 from sequential_strategies import apply_post_sequential
-
+from evaluate_objective_f import inicialize_informational_metrics
 from newtry_ms import newtry_ms
 from oop_core import ExperimentConfig, get_initializer
 from gg_adapter import sync_context_to_GG
@@ -59,9 +59,13 @@ class GBFSRunner:
 
     def _prepare_context_one_run(self, data_idx: int, run_id: int,
                                  init_modes_lc, kshell_modes_lc, post_modes_lc) -> GBFSContext:
+
+        print("EUNNER OOP")
         condata, label, datasetName = myinputdatasetXD(data_idx)
         conData = condata[:, 1:]
         zData = _mapminmax_zero_one(conData)
+
+        #inicialize_informational_metrics() #pode estar no lugar errado, tem q ser depois de definir GG.trData
 
         # split
         sss = StratifiedShuffleSplit(n_splits=1, test_size=self.cfg.test_size, random_state=self.cfg.split_seed)
@@ -165,10 +169,17 @@ class GBFSRunner:
                 init_modes_lc=init_modes,
                 kshell_modes_lc=kshell_seq_modes,
                 post_modes_lc=post_seq_modes
-            )
+            )   
+            # sincronizando os dados mais essenciais
+            GG.trData = ctx.trData
+            GG.trLabel = ctx.trLabel
+            GG.featNum = ctx.trData.shape[1]
+            
+            inicialize_informational_metrics()
+
             prep_time = perf_counter() - tic
 
-            # cache C per (run, init_mode) vì candidate_pairs=neigh_list phụ thuộc init
+            # Armazena C em cache por (run, init_mode), pois candidate_pairs=neigh_list depende da inicialização
             C_cache = {}
 
             for init_mode in init_modes:

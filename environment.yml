@@ -17,6 +17,7 @@ dependencies:
   - pillow
   - imbalanced-learn=0.12
   - qpsolvers=4.8
+  - pymoo
 
   - pip:
       - itmo-fs==0.3.3

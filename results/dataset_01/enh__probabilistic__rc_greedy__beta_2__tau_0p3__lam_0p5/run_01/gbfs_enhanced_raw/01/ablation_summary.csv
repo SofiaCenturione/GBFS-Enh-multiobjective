@@ -1,0 +1,4 @@
+run,acc_probabilistic__ksrc_greedy__postnormal,fnum_probabilistic__ksrc_greedy__postnormal,red_probabilistic__ksrc_greedy__postnormal,time_probabilistic__ksrc_greedy__postnormal,acc_probabilistic__ksrc_greedy__postbuddy,fnum_probabilistic__ksrc_greedy__postbuddy,red_probabilistic__ksrc_greedy__postbuddy,time_probabilistic__ksrc_greedy__postbuddy
+1,0.6615384615384615,5,0.21195732446467125,1.8664918,0.6153846153846154,6,0.26446789002069704,1.8866710999999998
+mean,0.6615384615384615,5,0.21195732446467125,1.8664918,0.6153846153846154,6,0.26446789002069704,1.8866710999999998
+std,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

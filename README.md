@@ -165,7 +165,7 @@ mkdir -p Data
 > This project is a **feature selection benchmarking framework** (not a neural network trainer).  
 > “Training” here refers to running feature-selection search and evaluating selected subsets.
 
-### Main entrypoint (recommended)
+### Python benchmark entrypoint
 
 Use `Compare/run_one_algo.py` for one dataset / one run / one algorithm:
 
@@ -178,6 +178,59 @@ python Compare/run_one_algo.py \
   --baseline_root "./Python Code" \
   --oop_root "./OOP Code"
 ```
+
+### Java/Maven entrypoint
+
+The Java runner writes to the same per-run directory/file contract. From the
+repository root:
+
+```powershell
+mvn test
+mvn -q package dependency:copy-dependencies -DoutputDirectory=target/dependency
+java -cp "target\classes;target\dependency\*" org.gbfs.cli.Main `
+  --dataset_idx 1 --run 1 --algo all `
+  --out_root "results" `
+  --data_dir "Data"
+```
+
+Currently implemented in Java: `all`, the five univariate filters
+`FILTER_pearson`, `FILTER_kendall`, `FILTER_reliefF`, `FILTER_chi2`,
+`FILTER_info_gain`, and enhanced graph-shell combinations such as
+`enh:probabilistic:rc_greedy` or `enh:knn:normal`. Enhanced runs execute a
+binary NSGA-III search over feature and neighbor-mask genes, evaluate the
+five relevance/redundancy/synergy/size/stability objectives, apply k-shell and
+optional RC-Greedy selection, and then write the
+selected feature indices for both `post_normal` and `post_buddy` in
+`test_points.csv` and in
+`gbfs_enhanced_raw/<dataset_idx>/run_01/<init_mode>/ks_<ks_mode>/post_<mode>/selected_features.txt`.
+That raw directory also contains the Pareto `.npy` arrays, `S0_selected.txt`,
+solver/post metrics, and the per-dataset `ablation_summary.csv`, matching the
+Python runner's layout. The shared files `run_info.json`, `run_meta.json`,
+`front_train_cv.csv`, and `test_points.csv` use the Python runner's schema.
+Running `mvn test`
+executes the `all`-features integration test and writes artifacts under
+`results/dataset_01/all/run_01/`. Repeating a run with the same dataset,
+algorithm/parameters, and run number reuses that directory and replaces the
+Java-generated result files; different algorithms/parameters and run numbers
+keep their own directories. Unmanaged files in a run directory are preserved.
+Unsupported algorithms write `error.txt` instead of fabricated success metrics.
+Classification metrics use Weka `IBk` (uniform-vote KNN) with an unnormalized
+Euclidean distance, matching the principal `KNeighborsClassifier` settings
+used by the Python runner. The Java stratified split/fold generation and
+preprocessing remain native implementations, so this change does not guarantee
+identical scores.
+
+**Parity status:** Java now includes the binary NSGA-III evolutionary search,
+five-objective evaluation, graph-shell selection, optional RC-Greedy, and
+post-search Buddy refinement. Its output file layout/schema mirrors the Python
+runner, but values are not guaranteed to match: reference directions
+approximate `pymoo`'s energy directions, random streams differ, and
+histogram/statistical details and native CV/split/filter implementations may
+differ numerically. The GBFS baseline,
+embedded/wrapper traditional methods, and InfFS/UGFS are not yet implemented.
+Java accepts a numeric `--fixed_fnum`; Python's `--fixed_fnum True/auto` lookup
+through `ref_sizes.csv` is not implemented. Use Python for paper-parity
+benchmarking.
 
 ### Supported `--algo` formats
 

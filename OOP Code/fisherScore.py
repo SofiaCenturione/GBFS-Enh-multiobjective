@@ -1,6 +1,6 @@
 from fsFisher import fsFisher
 
-def fisherScore(X, Y):
+def fisherScore(X, Y): # metodo classico de fs
     """
     Parameters
     ----------

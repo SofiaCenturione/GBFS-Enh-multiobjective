@@ -2,7 +2,6 @@ import numpy as np
 import gbfs_globals as GG
 import pandas as pd
 import os
-import numpy as np
 import json
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -72,15 +71,16 @@ def save_pareto_front_csv(chromosome_f, i, V_f, run_dir):
     """
     if run_dir is None:
         return
-    csv_file_name = f"{run_dir}/gen_{i:03d}.csv"
+    #csv_file_name = f"{run_dir}/gen_{i:03d}.csv"  TIREI MAS NÃO TENHO CRTZ
 
     ranks = chromosome_f[:, V_f + GG.M].astype(int)
     mask = (ranks == 1)
     pareto = chromosome_f[mask]
 
     objs = pareto[:, V_f: V_f + GG.M]
+    col_names = [f"obj{k+1}" for k in range(objs.shape[1])]
 
-    df = pd.DataFrame(objs, columns=["obj1", "obj2"])
+    df = pd.DataFrame(objs, columns=col_names)
     run_id = getattr(GG, "current_run", None)
     if run_id is not None and run_id in GG.run_logs:
         GG.run_logs[run_id]["pareto_fronts"].append(
@@ -103,44 +103,28 @@ def log_population_metrics(chromosome_f, i, V_f, run_dir):
         Directory of the current run (to save CSV files)
     """
     objs = chromosome_f[:, V_f:V_f + GG.M]
-    obj1 = objs[:, 0]
-    obj2 = objs[:, 1]
+    n_objs = objs.shape[1]
 
-    mean_obj1 = float(np.mean(obj1))
-    mean_obj2 = float(np.mean(obj2))
-    std_obj1 = float(np.std(obj1))
-    std_obj2 = float(np.std(obj2))
+    row = {
+        "run": getattr(GG, "current_run", None),
+        "gen": i
+    }
+    
+    # adiciona media e desvio padrao para cada objetivo dinamicamente
+    for k in range(n_objs):
+        row[f"mean_obj{k+1}"] = float(np.mean(objs[:, k]))
+        row[f"std_obj{k+1}"] = float(np.std(objs[:, k]))
 
     rank_col_index = V_f + GG.M
     if rank_col_index < chromosome_f.shape[1]:
         ranks = chromosome_f[:, rank_col_index]
-        prop_rank1 = float(np.mean(ranks == 1))
+        row["prop_rank1"] = float(np.mean(ranks == 1))
     else:
-        prop_rank1 = np.nan
-
-    metrics_path = os.path.join(run_dir, "pop_metrics.csv")
-
-    row = {
-        "run": getattr(GG, "current_run", None),
-        "gen": i,
-        "mean_obj1": mean_obj1,
-        "mean_obj2": mean_obj2,
-        "std_obj1": std_obj1,
-        "std_obj2": std_obj2,
-        "prop_rank1": prop_rank1,
-    }
+        row["prop_rank1"] = np.nan
 
     run_id = row["run"]
     if run_id is not None and run_id in GG.run_logs:
         GG.run_logs[run_id]["pop_metrics"].append(row)
-        return
-
-    # if not os.path.exists(metrics_path):
-    #     df = pd.DataFrame([row])
-    #     df.to_csv(metrics_path, index=False)
-    # else:
-    #     df = pd.DataFrame([row])
-    #     df.to_csv(metrics_path, mode="a", header=False, index=False)
 
 def plot_knn_graph_with_selected(neighbors, edge_mask,
                                  selected_features,
@@ -148,25 +132,25 @@ def plot_knn_graph_with_selected(neighbors, edge_mask,
                                  run_id=None,
                                  filename_prefix="knn_graph"):
     """
-    Vẽ đồ thị từ neigh_list (GG.neigh_list) và vector bit edge_mask (kNeigh_chosen).
+    Desenha o grafo a partir de neigh_list (GG.neigh_list) e do vetor de bits edge_mask (kNeigh_chosen).
 
-    Representation (đồng nhất với decodeNet & V_f):
+    Representação (consistente com decodeNet e V_f):
         - GG.neigh_list: list length = n_features,
-              neigh_list[i] = array/list các neighbor j của i,
-              duyệt theo đúng thứ tự để flatten.
-        - edge_mask: mảng 0/1 độ dài V_f, với
+              neigh_list[i] = array/list dos vizinhos j de i,
+              percorrida na ordem correta para achatar.
+        - edge_mask: array 0/1 de comprimento V_f, em que
               V_f = sum(len(nb) for nb in GG.neigh_list)
-          Mỗi phần tử edge_mask[idx] quyết định có vẽ cạnh (i, j) tương ứng hay không,
-          với thứ tự duyệt:
-              idx chạy tăng dần theo:
+          Cada elemento edge_mask[idx] determina se a aresta (i, j) correspondente será desenhada,
+          seguindo a ordem de percurso:
+              idx aumenta conforme:
                   for i in range(n_features):
                       for j in neigh_list[i]:
                           ...
     """
-    # --- Lấy neigh_list từ global ---
+    # --- Obtém neigh_list do estado global ---
     neigh_list = neighbors
 
-    # Đảm bảo tất cả phần tử là np.array[int]
+    # Garante que todos os elementos sejam np.array[int]
     neigh_list = [np.asarray(nb, dtype=int) for nb in neigh_list]
 
     n_features = len(neigh_list)
@@ -180,7 +164,7 @@ def plot_knn_graph_with_selected(neighbors, edge_mask,
             f"sum(len(nb) for nb in neigh_list) = {expected_len}"
         )
 
-    # ---- Xây graph từ bit-mask ----
+    # ---- Constrói o grafo a partir da máscara de bits ----
     G = nx.Graph()
     G.add_nodes_from(range(n_features))
 
@@ -197,20 +181,20 @@ def plot_knn_graph_with_selected(neighbors, edge_mask,
     # ---- Layout ----
     pos = nx.spring_layout(G, seed=42)
 
-    # ---- Node style: tô đậm node được chọn ----
+    # ---- Estilo dos nós: destaca o nó selecionado ----
     node_colors = []
     node_sizes = []
     selected_set = set(selected_features.tolist())
 
     for node in G.nodes():
         if node in selected_set:
-            node_colors.append("tab:red")   # feature được chọn
+            node_colors.append("tab:red")   # característica selecionada
             node_sizes.append(700)
         else:
-            node_colors.append("tab:blue")  # feature không được chọn
+            node_colors.append("tab:blue")  # característica não selecionada
             node_sizes.append(300)
 
-    # ---- Edge style: đậm hơn nếu nối giữa 2 selected features ----
+    # ---- Estilo das arestas: mais destacado quando conecta duas características selecionadas ----
     edge_colors = []
     edge_widths = []
     for u, v in G.edges():
@@ -224,7 +208,7 @@ def plot_knn_graph_with_selected(neighbors, edge_mask,
             edge_colors.append("lightgray")
             edge_widths.append(0.8)
 
-    # ---- Vẽ ----
+    # ---- Desenha ----
     plt.figure(figsize=(6, 6))
 
     if len(G.edges()) > 0:
@@ -249,7 +233,7 @@ def plot_knn_graph_with_selected(neighbors, edge_mask,
     plt.axis("off")
     plt.tight_layout()
 
-    # ---- Lưu hình ----
+    # ---- Salva a imagem ----
     if run_id is None:
         fname = f"{filename_prefix}.png"
     else:
@@ -352,18 +336,18 @@ def compute_complementarity_matrix(
 
 def compute_single_feature_accuracy(X, y, n_neighbors=5, cv=5, use_cv=True, random_state=0):
     """
-    Tính acc_single[i] cho từng feature i:
-        - Nếu use_cv=True: dùng StratifiedKFold CV trên X[:, [i]]
-        - Nếu use_cv=False: fit + predict trên cùng data (nhanh nhưng lạc quan)
+    Calcula acc_single[i] para cada característica i:
+        - Se use_cv=True: usa validação cruzada StratifiedKFold em X[:, [i]]
+        - Se use_cv=False: ajusta e prevê nos mesmos dados (mais rápido, mas otimista)
 
     Parameters
     ----------
     X : np.ndarray, shape (n_samples, n_features)
     y : np.ndarray, shape (n_samples,)
     n_neighbors : int
-        Số lân cận trong KNN.
+        Número de vizinhos no KNN.
     cv : int
-        Số fold trong cross-validation.
+        Número de folds na validação cruzada.
     use_cv : bool
         True -> dùng CV, False -> dùng apparent accuracy (train=eval).
     random_state : int
@@ -416,9 +400,9 @@ def _save_selected_txt(S, path_txt):
 
 def _export_legacy_solver_logs(run_dir, gg_logs: dict):
     """
-    Export giống code cũ:
+    Exporta no mesmo formato do código antigo:
       - pop_metrics.csv
-      - gen_XXX.csv cho từng pareto front
+      - gen_XXX.csv para cada fronteira de Pareto
     """
     pop_rows = gg_logs.get("pop_metrics", [])
     if pop_rows:

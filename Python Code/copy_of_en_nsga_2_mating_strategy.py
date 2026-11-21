@@ -48,7 +48,7 @@ def copy_of_en_nsga_2_mating_strategy(pop, gen, templateAdj, V_f):
     if gen < 5:
         raise ValueError("Minimum number of generations is 5")
 
-    M = 2
+    M = 5 # N DE OBJETIVOS
 
     # ----- Initialize population (feature-side) -----
     chromosome_f, featIdx = initialize_variables_f(pop, M, V_f, templateAdj)

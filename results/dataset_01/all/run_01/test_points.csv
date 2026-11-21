@@ -1,0 +1,2 @@
+dataset_idx,dataset,method,run,test_mode,acc_test,eRate_test,fnum,fRatio,red,time_total,fset,note,scaler
+1,Glass,KNN_ALL,1,all,0.6307692307692307,0.36923076923076925,9,1.0,0.227698429382372,0.0035964,0 1 2 3 4 5 6 7 8,ALL features,StandardScaler

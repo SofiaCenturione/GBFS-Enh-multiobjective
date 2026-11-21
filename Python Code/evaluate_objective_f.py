@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np #ESSE É O CÓDIGO BASELINE DO ARTIGO (VERSÃO ANTES DO ENH)
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import KFold
 
